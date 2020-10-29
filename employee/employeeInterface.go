@@ -12,4 +12,5 @@ type E1 interface{
 	EmpByName(string) (*model.Employee, error)
 	EmpDelete(string) (error)
 	EmpUpdate(*model.Employee, string) (error)
+	Makefile()
 }

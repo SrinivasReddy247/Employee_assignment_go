@@ -48,6 +48,7 @@ func(h *Handler) EmployeeList(c echo.Context) error{
 	if err!=nil{
 		return c.JSON(http.StatusUnprocessableEntity, util.NewError(err))
 	}
+	h.eselect.Makefile()
 	return c.JSON(http.StatusOK, elist(v))
 }
 

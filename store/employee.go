@@ -2,11 +2,14 @@ package store
 
 import (
 	"errors"
+    "strconv"
+
     //"log"
     "fmt"
 	"github.com/jmoiron/sqlx"
     "github.com/srinivasrdy247/Employee_assignment_go/model"
     "github.com/srinivasrdy247/Employee_assignment_go/util"
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 type Connecting struct{
@@ -139,6 +142,34 @@ func(connect *Connecting) EmpUpdate(employee *model.Employee, ID string)(error){
       // return errors.New("Need any DOB or Name to update")
 }
 
+func (d *Connecting) Makefile() {
+    employee := []model.Employee{}
+    err := d.db.Select(&employee,"SELECT * FROM employee WHERE status=$1;",true)
+    if err != nil{
+       fmt.Println(err.Error())
+       return
+    }
+    f := excelize.NewFile()
+    index:=f.NewSheet("sheet2")
+    f.SetCellValue("sheet2","A1","Employee_id")
+    f.SetCellValue("sheet2","B1","Name")
+    f.SetCellValue("sheet2","C1","Email")
+    f.SetCellValue("sheet2","D1","Status")
+    f.SetCellValue("sheet2","E1","DOB")
+    for i := 0;i<len(employee);i++{
+        s:=strconv.Itoa(i+2)
+        f.SetCellValue("sheet2","A"+s,employee[i].EId)
+        f.SetCellValue("sheet2","B"+s,employee[i].Name)
+        f.SetCellValue("sheet2","C"+s,employee[i].Email)
+        f.SetCellValue("sheet2","D"+s,employee[i].Status)
+        f.SetCellValue("sheet2","E"+s,employee[i].DOB)
+    }
+    f.SetActiveSheet(index)
+    if err := f.SaveAs("Book2.xlsx"); err != nil {
+        println(err.Error())
+    }
+
+}
 /*func (d *Connecting) Empbymail(s string) (*model.Employee){
     var u model.Employee
     err:=d.db.Get(&u.Status,"SELECT id from Employee where Email=$1;",u.Email)
